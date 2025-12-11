@@ -1,1 +1,58 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChronoTravaux</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon.png">
+  <meta name="theme-color" content="#4caf50">
+</head>
+<body>
+  <h1>Suivi de chantier - ChronoTravaux</h1>
+  <p>Votre application PWA pour le suivi de chantier.</p>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js')
+      .then(reg => console.log('Service Worker enregistré:', reg))
+      .catch(err => console.log('Erreur Service Worker:', err));
+    }
+  </script>
+</body>
+</html>
+{
+  "name": "ChronoTravaux",
+  "short_name": "Chrono",
+  "start_url": "./ChronoTravaux.html",
+  "display": "standalone",
+  "background_color": "#f5f5f5",
+  "theme_color": "#4caf50",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}
+self.addEventListener('install', function(e) {
+  e.waitUntil(
+    caches.open('ChronoCache').then(function(cache) {
+      return cache.addAll([
+        './ChronoTravaux.html',
+        './manifest.json',
+        './icon.png'
+      ]);
+    })
+  );
+});
+
+self.addEventListener('fetch', function(e) {
+  e.respondWith(
+    caches.match(e.request).then(function(response) {
+      return response || fetch(e.request);
+    })
+  );
+});
 
